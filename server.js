@@ -1,8 +1,24 @@
-// Backend Project
-const Book = require('./models/Book');
+// Backend Project , sinple component file, but using 
+// const Book = require('./models/Book');
 const express = require('express');
-const mongoose = require('mongoose');
+
 const dotenv = require('dotenv');
+
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const bookSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    author: {
+        type: String,
+        required: true
+    }
+}, {timestamps: true});
+
+const Book = mongoose.model('Book', bookSchema);
 
 dotenv.config();
 // express app
@@ -16,7 +32,8 @@ app.listen(PORT , ()=> {
 });
 
 // Connect to MongoDB
-const db = process.env.MONGO_URI; // MongoDB URI from .env file
+const db = 'mongodb+srv://AdeelAhmed:AdeelAhmedMDBAtlas@cluster0.9xwcl.mongodb.net/Exam?retryWrites=true&w=majority';
+
 if (!db) {
   console.error("MONGO_DB URI not found in environment variables.");
   process.exit(1); // Exit the process with failure
@@ -37,18 +54,12 @@ app.post('/books', (req,res)=>{
     const book = new Book(req.body);
     const result = book.save();
     res.send(result)
-    .then(result => {
-      res.send(result);
-    })
-    .catch(err => {
-      console.log(err);
-    });
 });
 
 // get book by id
 app.get('/books/:id', (req, res) => {
   const id = req.params.id;
-  Blog.findById(id)
+  Book.findById(id)
     .then(result => {
       res.send(result);
     })
@@ -56,6 +67,7 @@ app.get('/books/:id', (req, res) => {
       console.log(err)
     })
 });
+
 // get all books
 app.get('/books', async (req, res) => {
   try {
@@ -66,10 +78,10 @@ app.get('/books', async (req, res) => {
   }
 });
 
-
+// delete book by id
 app.delete('/books/:id', (req, res) => {
   const id = req.params.id;
-  Blog.findByIdAndDelete(id)
+  Book.findByIdAndDelete(id)
     .then(result => {
       res.send(result);
     })
